@@ -1,0 +1,13 @@
+.body-height {
+  height: calc(100vh - 100px);
+  display: flex;
+  flex-flow: column;
+}
+
+.flex-grow1 {
+  flex-grow: 1;
+}
+
+.full-height {
+  height: 100%;
+}

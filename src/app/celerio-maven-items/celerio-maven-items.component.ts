@@ -3,19 +3,6 @@ import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { SharedService } from '../shared.service';
 
-type SnakeToCamelCase<S extends string> =
-  S extends `${infer T}_${infer U}` ?
-  `${Lowercase<T>}${Capitalize<SnakeToCamelCase<U>>}` :
-  S
-type CamelToSnakeCase<S extends string> =
-  S extends `${infer T}${infer U}` ?
-  `${T extends Capitalize<T> ? "_" : ""}${Lowercase<T>}${CamelToSnakeCase<U>}` :
-  S
-
-type CamelToPascalCase<S extends string> = Capitalize<S>
-type PascalToCamelCase<S extends string> = Uncapitalize<S>
-type PascalToSnakeCase<S extends string> = CamelToSnakeCase<Uncapitalize<S>>
-type SnakeToPascalCase<S extends string> = Capitalize<SnakeToCamelCase<S>>
 
 @Component({
   selector: 'app-celerio-maven-items',
@@ -24,12 +11,11 @@ type SnakeToPascalCase<S extends string> = Capitalize<SnakeToCamelCase<S>>
 })
 export class CelerioMavenItemsComponent implements OnInit {
 
-
-
   form = new FormGroup({});
   model: any = {entityConfigs: []};
   options: FormlyFormOptions = {};
   fields: FormlyFieldConfig[] = [];
+
   constructor(private sharedService: SharedService) {
 
   }

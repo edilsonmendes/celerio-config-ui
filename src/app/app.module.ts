@@ -9,6 +9,7 @@ import { MetadataXmlInputComponent } from './metadata-xml-input/metadata-xml-inp
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CelerioMavenItemsComponent } from './celerio-maven-items/celerio-maven-items.component';
 import { EntityRepeatTypeComponent } from './celerio-maven-items/entity-repeat-type.component';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { EntityRepeatTypeComponent } from './celerio-maven-items/entity-repeat-t
   imports: [
     BrowserModule,
     ReactiveFormsModule,
+    MonacoEditorModule.forRoot(),
     FormlyModule.forRoot({ extras: { lazyRender: true }, types: [
       { name: 'entity-repeat', component: EntityRepeatTypeComponent },
     ], }),

@@ -10,6 +10,15 @@ import { SharedService } from '../shared.service';
 })
 export class MetadataXmlInputComponent implements OnInit {
 
+  editorOptions = {
+    theme: 'vs-dark',
+    language: 'xml',
+    fontSize: 11,
+    minimap: {
+      enabled: false,
+    }
+  };
+
   private options = {
     attributeNamePrefix : "",
     ignoreAttributes : false,
@@ -35,8 +44,10 @@ export class MetadataXmlInputComponent implements OnInit {
 
   parseMetadataXML(xml: string) {
     try {
-      const pasedObject = parser.parse(xml, this.options);
-      this.sharedService.changeData(pasedObject);
+      if (xml) {
+        const pasedObject = parser.parse(xml, this.options);
+        this.sharedService.changeData(pasedObject);
+      }
     } catch (error) {
 
     }

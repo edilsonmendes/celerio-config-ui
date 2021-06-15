@@ -6,12 +6,7 @@
     class="needs-validation"
     [formGroup]="metadataForm"
     class="full-height">
-      <textarea
-        class="form-control full-height"
-        autoResize="true"
-        formControlName="metadata"
-        id="metadata">
-      </textarea>
+      <ngx-monaco-editor class="full-height" [options]="editorOptions" formControlName="metadata"></ngx-monaco-editor>
     </form>
   </div>
 </div>

@@ -1,4 +1,107 @@
-<form [formGroup]="form" (ngSubmit)="submit()" *ngIf="fields && fields.length > 0">
-  <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>
-  <button type="submit" class="btn btn-primary submit-button" [disabled]="!form.valid">Submit</button>
-</form>
+<div class="ml-4">
+  <form [formGroup]="celerioForm" *ngIf="showForm">
+    <!--<formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>-->
+    <div>
+      <h4>Application Settings</h4>
+
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="rootPackage">Root Package</label>
+          <input class="form-control" id="rootPackage" type="text" formControlName="rootPackage">
+        </div>
+
+        <div class="form-group col-md-4">
+          <label for="applicationName">Application Name</label>
+          <input class="form-control" id="applicationName" type="text" formControlName="applicationName">
+        </div>
+
+        <div class="form-group col-md-4">
+          <label for="schemaName">Schema Name</label>
+          <input class="form-control" id="schemaName" type="text" formControlName="schemaName">
+        </div>
+      </div>
+    </div>
+
+    <div formArrayName="entityConfig">
+      <h5>Entities</h5>
+      <div *ngFor="let config of entityConfig;let entityConfigIndex=index;" class="entities-container">
+        <div [formGroupName]="entityConfigIndex">
+          <div class="form-row">
+            <h4 class="col-12">{{config.value.tableName}}</h4>
+            <div class="form-group col-md-6">
+              <label for="entityName">Entity</label>
+              <input class="form-control form-control-sm" id="entityName" formControlName="entityName" />
+            </div>
+            <div class="form-group col-md-6">
+              <label for="sequenceName">Sequence</label>
+              <input class="form-control form-control-sm" id="sequenceName" formControlName="sequenceName" />
+            </div>
+          </div>
+          <table class="table table-bordered pagin-table table-striped" style="margin-bottom: 5px;">
+            <thead>
+               <tr>
+                  <th class="col-xs-4">Column/Field</th>
+                  <th class="col-xs-8">Celerio</th>
+               </tr>
+            </thead>
+            <tbody id="crttblbody" class="ui-sortable" formArrayName="columnConfigs">
+              <tr *ngFor="let column of getColumnConfigsFor(entityConfigIndex);let columnIndex=index;" [formGroupName]="columnIndex">
+                <td>
+                  <div class="form-group mb-1">
+                    <label class="font-weight-bold">Column: {{column.value.columnName }}</label>
+                  </div>
+                  <div class="form-group mb-1">
+                    <label class="font-weight-bold">Field</label>
+                    <input class="form-control form-control-sm" id="fieldName" formControlName="fieldName" />
+                  </div>
+                  <div class="form-group mb-1">
+                    <label class="font-weight-bold">Label</label>
+                    <input class="form-control form-control-sm" id="label" formControlName="label" />
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="formField" formControlName="formField">
+                      <label class="form-check-label" for="formField">Form field</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="searchField" formControlName="searchField">
+                      <label class="form-check-label" for="searchField">Search field</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="searchResult" formControlName="searchResult">
+                      <label class="form-check-label" for="searchResult">Search result</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="version" formControlName="version">
+                      <label class="form-check-label" for="searchResult">Version</label>
+                    </div>
+                    <div class="form-group mb-1 mt-2">
+                      <label class="font-weight-bold">Display order</label>
+                      <input class="form-control form-control-sm" id="displayOrder" formControlName="displayOrder" />
+                    </div>
+                    <div class="form-group mb-1 mt-2">
+                      <label class="font-weight-bold">Shared enum name</label>
+                      <input class="form-control form-control-sm" id="sharedEnumName" formControlName="sharedEnumName" />
+                    </div>
+                    <div class="form-group mb-1 mt-2">
+                      <label class="font-weight-bold">Type</label>
+                      <input class="form-control form-control-sm" id="type" formControlName="type" />
+                    </div>
+                    <div class="form-group mb-1 mt-2">
+                      <label class="font-weight-bold">Mapped type</label>
+                      <input class="form-control form-control-sm" id="mappedType" formControlName="mappedType" />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary submit-button" [disabled]="!celerioForm.valid">Submit</button>
+  </form>
+</div>

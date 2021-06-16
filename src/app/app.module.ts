@@ -10,6 +10,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CelerioMavenItemsComponent } from './celerio-maven-items/celerio-maven-items.component';
 import { EntityRepeatTypeComponent } from './celerio-maven-items/entity-repeat-type.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
+import { Bootstrap4FrameworkModule } from '@ajsf/bootstrap4';
 
 @NgModule({
   declarations: [
@@ -22,10 +23,14 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
     BrowserModule,
     ReactiveFormsModule,
     MonacoEditorModule.forRoot(),
-    FormlyModule.forRoot({ extras: { lazyRender: true }, types: [
-      { name: 'entity-repeat', component: EntityRepeatTypeComponent },
-    ], }),
+    FormlyModule.forRoot({
+      extras: { lazyRender: true },
+      types: [
+        { name: 'entity-repeat', component: EntityRepeatTypeComponent },
+      ],
+    }),
     FormlyBootstrapModule,
+    Bootstrap4FrameworkModule,
     NgbModule
   ],
   providers: [],

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { SharedService } from '../shared.service';
 
@@ -11,27 +11,69 @@ import { SharedService } from '../shared.service';
 })
 export class CelerioMavenItemsComponent implements OnInit {
 
-  form = new FormGroup({});
+  public celerioForm = new  FormGroup({});
   model: any = {entityConfigs: []};
-  options: FormlyFormOptions = {};
-  fields: FormlyFieldConfig[] = [];
 
-  constructor(private sharedService: SharedService) {
+  showForm = false;
+  parsedObject: any
 
+  constructor(protected fb: FormBuilder, private sharedService: SharedService) {
+
+  }
+
+  getColumnConfigs(columnConfigs: any[]) {
+    return columnConfigs.map(columnConfig => this.fb.group({
+      columnName: [columnConfig.name], //[{value: columnConfig.name, disabled: true}, Validators.required],
+      fieldName: [this.snakeToCamelCase(columnConfig.name), Validators.required],
+      label: [this.snakeToCamelCase(columnConfig.name), Validators.required],
+      formField: [true],
+      searchField: [true],
+      searchResult: [true],
+      version: [],
+      displayOrder: [''],
+      sharedEnumName: [''],
+      type: [''],
+      mappedType: [''],
+    }));
+  }
+
+  get entityConfig() {
+    return ( < FormArray > this.celerioForm.get('entityConfig')).controls;
+  }
+
+  getColumnConfigsFor(index: number) {
+    return ( < FormArray > ( < FormArray > this.celerioForm.get('entityConfig')).controls[index].get('columnConfigs')).controls;
+  }
+
+  getEntityConfig() {
+    if (!this.parsedObject) return;
+
+    return this.parsedObject.metadata.tables.table.map( (table: any) => this.fb.group({
+      tableName: [table.name],//[{value: table.name, disabled: true}, Validators.required],
+      entityName: [this.snakeToPascalCase(table.name), Validators.required],
+      sequenceName: ['SEQ_' + table.name, Validators.required],
+      columnConfigs: this.fb.array(this.getColumnConfigs(table.columns.column)),
+    }));
   }
 
   ngOnInit(): void {
     this.sharedService.currentData.subscribe(data => {
-      this.createFields(data);
+      this.parsedObject = data;
+      this.createFields();
     });
   }
 
-  private createFields(parsedObject: any) {
-    this.fields = [];
-    if (parsedObject) {
-
-      this.fields.push(this.createHeaderFields(parsedObject));
-      this.fields.push(this.createEntitiesFields(parsedObject));
+  private createFields() {
+    this.showForm = false;
+    console.log(this.parsedObject)
+    if (this.parsedObject) {
+      this.celerioForm = this.fb.group({
+        rootPackage: ['', Validators.required],
+        applicationName: ['', Validators.required],
+        schemaName: ['', Validators.required],
+        entityConfig: this.fb.array(this.getEntityConfig())
+      });
+      this.showForm = true;
     }
 
   }
@@ -120,7 +162,11 @@ export class CelerioMavenItemsComponent implements OnInit {
   }
 
   private snakeToPascalCase(str: any) {
-    return this.capitalizeFirstLetter(str ? str
+    return this.capitalizeFirstLetter(this.snakeToCamelCase(str));
+  }
+
+  private snakeToCamelCase(str: any) {
+    return str ? str
     .split("_")
     .reduce(
       (res: string, word: string, i: number) =>
@@ -129,15 +175,15 @@ export class CelerioMavenItemsComponent implements OnInit {
           : `${res}${word.charAt(0).toUpperCase()}${word
               .substr(1)
               .toLowerCase()}`,
-      "") : "");
+      "") : "";
   }
 
   private capitalizeFirstLetter(str: any) {
     return (str && str[0].toUpperCase() + str.slice(1)) || "";
   }
 
-  submit() {
-    alert(JSON.stringify(this.model));
+  submit(event: any) {
+    alert(JSON.stringify(event));
   }
 
 }

@@ -16,7 +16,8 @@ export class MetadataXmlInputComponent implements OnInit {
     fontSize: 11,
     minimap: {
       enabled: false,
-    }
+    },
+    automaticLayout: true
   };
 
   private options = {

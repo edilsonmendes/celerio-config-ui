@@ -4,3 +4,22 @@
   margin-bottom: 15px;
   border-radius: 15px;
 }
+
+.w-10 {
+  width: 10%;
+}
+
+.w-5 {
+  width: 5%;
+}
+
+.info-label-small {
+  display: block;
+  font-size: 80%;
+  font-weight: 400;
+  margin-bottom: 0.20rem;
+}
+
+.table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+  background-color: #f9f9f9;
+}

@@ -13,7 +13,6 @@ export class CelerioMavenItemsComponent implements OnInit {
 
   public celerioForm = new  FormGroup({});
   model: any = {entityConfigs: []};
-
   showForm = false;
   parsedObject: any
 
@@ -34,6 +33,10 @@ export class CelerioMavenItemsComponent implements OnInit {
       sharedEnumName: [''],
       type: [''],
       mappedType: [''],
+      oneToMany: [],
+      bidirectional: [],
+      var: [],
+      elementVar: []
     }));
   }
 

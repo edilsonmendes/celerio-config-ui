@@ -11,6 +11,7 @@ import { CelerioMavenItemsComponent } from './celerio-maven-items/celerio-maven-
 import { EntityRepeatTypeComponent } from './celerio-maven-items/entity-repeat-type.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { Bootstrap4FrameworkModule } from '@ajsf/bootstrap4';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { Bootstrap4FrameworkModule } from '@ajsf/bootstrap4';
   imports: [
     BrowserModule,
     ReactiveFormsModule,
+    HttpClientModule,
     MonacoEditorModule.forRoot(),
     FormlyModule.forRoot({
       extras: { lazyRender: true },

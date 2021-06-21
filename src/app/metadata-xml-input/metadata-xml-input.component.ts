@@ -1,6 +1,7 @@
 import { Component, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as parser from 'fast-xml-parser'
+import * as xmlBuilder2 from 'xmlbuilder2'
 import { SharedService } from '../shared.service';
 
 @Component({
@@ -26,7 +27,7 @@ export class MetadataXmlInputComponent implements OnInit {
     ignoreNameSpace : false,
     allowBooleanAttributes : true,
     parseNodeValue : true,
-    parseAttributeValue : true,
+    parseAttributeValue : true
   }
 
   public metadataForm: FormGroup;
@@ -48,6 +49,9 @@ export class MetadataXmlInputComponent implements OnInit {
       if (xml) {
         const pasedObject = parser.parse(xml, this.options);
         this.sharedService.changeData(pasedObject);
+
+        const obj = xmlBuilder2.convert(xml, { format: "object" });
+        console.log('xmlBuilder2', obj);
       }
     } catch (error) {
 

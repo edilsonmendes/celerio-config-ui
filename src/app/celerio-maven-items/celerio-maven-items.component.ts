@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { SharedService } from '../shared.service';
+import * as xmlBuilder2 from 'xmlbuilder2'
 
 
 @Component({
@@ -16,7 +18,7 @@ export class CelerioMavenItemsComponent implements OnInit {
   showForm = false;
   parsedObject: any
 
-  constructor(protected fb: FormBuilder, private sharedService: SharedService) {
+  constructor(protected fb: FormBuilder, private sharedService: SharedService, private http: HttpClient) {
 
   }
 
@@ -49,14 +51,19 @@ export class CelerioMavenItemsComponent implements OnInit {
   }
 
   getEntityConfig() {
-    if (!this.parsedObject) return;
+    const tableObj = this.parsedObject.metadata.tables.table;
 
-    return this.parsedObject.metadata.tables.table.map( (table: any) => this.fb.group({
+    return Array.isArray(tableObj) ? tableObj.map( (table: any) => this.fb.group({
       tableName: [table.name],//[{value: table.name, disabled: true}, Validators.required],
       entityName: [this.snakeToPascalCase(table.name), Validators.required],
       sequenceName: ['SEQ_' + table.name, Validators.required],
       columnConfigs: this.fb.array(this.getColumnConfigs(table.columns.column)),
-    }));
+    })) : [this.fb.group({
+      tableName: [tableObj.name],//[{value: table.name, disabled: true}, Validators.required],
+      entityName: [this.snakeToPascalCase(tableObj.name), Validators.required],
+      sequenceName: ['SEQ_' + tableObj.name, Validators.required],
+      columnConfigs: this.fb.array(this.getColumnConfigs(tableObj.columns.column)),
+    })];
   }
 
   ngOnInit(): void {
@@ -81,88 +88,6 @@ export class CelerioMavenItemsComponent implements OnInit {
 
   }
 
-  private createHeaderFields(parsedObject: any) {
-    const headerFields = {
-      fieldGroupClassName: 'row',
-      fieldGroup: [
-        {
-          className: 'col-4',
-          type: 'input',
-          key: 'rootPackage',
-          templateOptions: {
-            label: 'Package',
-          },
-        },
-        {
-          className: 'col-4',
-          type: 'input',
-          key: 'applicationName',
-          templateOptions: {
-            label: 'Application Name',
-          },
-        },
-        {
-          className: 'col-4',
-          type: 'input',
-          key: 'schema',
-          defaultValue: parsedObject.metadata.jdbcConnectivity.schemaName,
-          templateOptions: {
-            label: 'Schema',
-          },
-        },
-      ],
-    };
-
-    return headerFields;
-  }
-
-  private createEntitiesFields(parsedObject: any) {
-    const entitiesConfig = {
-      key: 'entityConfigs',
-      type: 'entity-repeat',
-      fieldArray: {
-        fieldGroupClassName: 'row',
-        fieldGroup: [
-          {
-            className: 'col-sm-4',
-            type: 'input',
-            key: 'tableName',
-            templateOptions: {
-              label: 'Table Name',
-              required: true,
-            },
-          },
-          {
-            type: 'input',
-            key: 'entityName',
-            className: 'col-sm-4',
-            templateOptions: {
-              label: 'Entity Name',
-              required: true,
-            },
-          },
-          {
-            type: 'input',
-            key: 'sequenceName',
-            className: 'col-sm-4',
-            templateOptions: {
-              label: 'Sequence Name:',
-              required: true,
-            },
-          },
-        ],
-      }
-    }
-    console.log('OBJ', parsedObject)
-    parsedObject.metadata.tables.table.forEach((element: any) => {
-      this.model.entityConfigs.push({tableName: element.name, entityName: this.snakeToPascalCase(element.name), sequenceName: 'SEQ_' + element.name})
-    });
-
-    console.log('MODEL', this.model.entityConfigs)
-
-    return entitiesConfig;
-
-  }
 
   private snakeToPascalCase(str: any) {
     return this.capitalizeFirstLetter(this.snakeToCamelCase(str));
@@ -187,6 +112,43 @@ export class CelerioMavenItemsComponent implements OnInit {
 
   submit(event: any) {
     alert(JSON.stringify(event));
+  }
+
+  generateCelerioXml() {
+    this.http.get('assets/celerio-template.xml', {responseType: 'text'})
+            .subscribe(xmlContent => {
+              const doc = xmlBuilder2.create(xmlContent);
+              const celerioTag = doc
+                .root() // <celerio>
+                .first() // <configuration>
+                .att('', 'rootPackage', 'package').att('', 'applicationName', 'appName');
+
+              const sequencesTag = celerioTag
+                .first() // skip comment
+                .next() // <tables>
+                .next() // skip comment
+                .next(); // <sequences>
+
+              sequencesTag.first() // <sequences>
+                  .att('', 'schema', 'DBOUVID01');
+
+
+              const entityConfisTag = celerioTag
+                .next() // skip comment
+                .next() ;
+
+              const entityConfig = entityConfisTag.ele('entityConfig');
+              entityConfig.att('tableName', 'ANEXO');
+              entityConfig.att('entityName', 'Anexo');
+              entityConfig.att('sequenceName', 'SEQ_ANE');
+              entityConfig.att('label', 'Anexo');
+              const columnConfigs = entityConfig.ele('columnConfigs');
+              const columConfig = columnConfigs.ele('columnConfig');
+              columConfig.att('columnName', 'ANE_ID');
+              columConfig.att('fieldName', 'id');
+              console.log(entityConfisTag.toString())
+              console.log(doc.end({ prettyPrint: true }))
+            });
   }
 
 }

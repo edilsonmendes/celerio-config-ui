@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<celerio xmlns="http://www.jaxio.com/schema/celerio" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.jaxio.com/schema/celerio ./celerio.xsd">
+    <configuration rootPackage="" applicationName="" jpaUseCatalog="FALSE" jpaUseSchema="TRUE">
+        <!-- Which tables are used for generation -->
+        <tables>
+          <table include="true" pattern="*" />
+          <!-- <table include="false" pattern="PARAMETRO"/> -->
+        </tables>
+
+        <!-- default global sequence mapping (optional). initialValue can be set and defaults to 1 when is not set. -->
+        <sequences>
+            <sequence tableNamePattern="*" sequenceName="*" allocationSize="1" schema="" />
+        </sequences>
+
+        <!-- global number mapping (optional) -->
+        <numberMappings>
+            <numberMapping mappedType="M_BOOLEAN" columnSizeMin="1" columnSizeMax="2" columnDecimalDigitsMin="0" columnDecimalDigitsMax="0"/>
+        </numberMappings>
+
+        <!-- global date mapping (optional) -->
+        <dateMappings>
+            <dateMapping columnJdbcType="TIMESTAMP" mappedType="M_LOCALDATETIME"/>
+            <dateMapping columnJdbcType="DATE" mappedType="M_LOCALDATE"/>
+        </dateMappings>
+
+        <!-- default configuration for fetch type / cascades / 2d level cache -->
+        <defaultEntityCacheConfig usage="NONE"/>
+
+        <defaultManyToOneConfig fetch="LAZY">
+            <cascades>
+                <cascade type="NONE"/>
+            </cascades>
+            <cacheConfig usage="NONE"/>
+            <associationAction create="true" edit="true" view="true" select="true" autoComplete="true" remove="false"/>
+        </defaultManyToOneConfig>
+
+        <defaultOneToManyConfig orphanRemoval="true">
+            <cascades>
+                <cascade type="ALL"/>
+            </cascades>
+            <cacheConfig usage="NONE"/>
+            <associationAction create="true" edit="true" view="true" select="true" autoComplete="true" remove="true"/>
+        </defaultOneToManyConfig>
+
+        <defaultOneToOneConfig fetch="LAZY">
+            <cascades>
+                <cascade type="NONE"/>
+            </cascades>
+            <cacheConfig usage="NONE"/>
+            <associationAction create="true" edit="true" view="true" select="false" autoComplete="true" remove="false"/>
+        </defaultOneToOneConfig>
+
+        <defaultInverseOneToOneConfig fetch="LAZY">
+            <cascades>
+                <cascade type="ALL"/>
+            </cascades>
+            <cacheConfig usage="NONE"/>
+            <associationAction create="false" edit="false" view="true" select="false" autoComplete="false"
+                               remove="false"/>
+        </defaultInverseOneToOneConfig>
+
+        <defaultManyToManyConfig>
+            <cascades>
+                <cascade type="ALL"/>
+            </cascades>
+            <cacheConfig usage="NONE"/>
+            <associationAction create="true" edit="true" view="true" select="true" autoComplete="false" remove="true"/>
+        </defaultManyToManyConfig>
+
+        <defaultInverseManyToManyConfig>
+            <cascades>
+                <cascade type="ALL"/>
+            </cascades>
+            <cacheConfig usage="NONE"/>
+            <associationAction create="false" edit="true" view="true" select="false" autoComplete="false" remove="false"/>
+        </defaultInverseManyToManyConfig>
+
+        <conventions identifiableProperty="id"></conventions>
+    </configuration>
+
+    <!-- CHANGE IT OR COMMENT IT IF YOU USE YOUR OWN DATABASE -->
+
+    <entityConfigs>
+
+
+    </entityConfigs>
+
+    <!-- CHANGE IT OR COMMENT IT IF YOU USE YOUR OWN DATABASE -->
+    <!-- Generate enums used by the entities above -->
+    <sharedEnumConfigs>
+        <sharedEnumConfig name="TipoParametro" type="CUSTOM">
+            <enumValues>
+                <enumValue name="INTEIRO" value="IT" label="Inteiro" />
+                <enumValue name="STRING" value="ST" label="String" />
+            </enumValues>
+        </sharedEnumConfig>
+        <sharedEnumConfig name="Status" type="ORDINAL">
+            <enumValues>
+                <enumValue value="INACTIVE" label="Inativo" />
+                <enumValue value="ACTIVE" label="Ativo" />
+            </enumValues>
+        </sharedEnumConfig>
+        <sharedEnumConfig name="SimNao" type="STRING">
+            <enumValues>
+                <enumValue value="S" label="Sim" />
+                <enumValue value="N" label="Não" />
+            </enumValues>
+        </sharedEnumConfig>
+		<sharedEnumConfig name="TipoPessoa" type="STRING">
+            <enumValues>
+                <enumValue value="F" label="Física" />
+                <enumValue value="J" label="Jurídica" />
+            </enumValues>
+        </sharedEnumConfig>
+    </sharedEnumConfigs>
+
+</celerio>

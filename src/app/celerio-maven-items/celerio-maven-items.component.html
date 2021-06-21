@@ -140,7 +140,6 @@
         </div>
       </div>
     </div>
-
-    <button type="submit" class="btn btn-primary submit-button" [disabled]="!celerioForm.valid">Submit</button>
   </form>
+  <button class="btn btn-primary submit-button" (click)="generateCelerioXml()" [disabled]="false">Generate Celerio XML</button>
 </div>

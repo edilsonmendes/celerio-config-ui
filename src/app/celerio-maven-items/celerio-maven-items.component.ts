@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { SharedService } from '../shared.service';
 import * as xmlBuilder2 from 'xmlbuilder2'
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -17,8 +18,22 @@ export class CelerioMavenItemsComponent implements OnInit {
   model: any = {entityConfigs: []};
   showForm = false;
   parsedObject: any
+  generatedXml: string = '';
 
-  constructor(protected fb: FormBuilder, private sharedService: SharedService, private http: HttpClient) {
+  editorOptions = {
+    theme: 'vs-dark',
+    language: 'xml',
+    fontSize: 11,
+    minimap: {
+      enabled: false,
+    },
+    automaticLayout: true
+  };
+
+  constructor(protected fb: FormBuilder,
+    private sharedService: SharedService,
+    private http: HttpClient,
+    private modalService: NgbModal) {
 
   }
 
@@ -30,15 +45,15 @@ export class CelerioMavenItemsComponent implements OnInit {
       formField: [true],
       searchField: [true],
       searchResult: [true],
-      version: [],
+      version: [''],
       displayOrder: [''],
       sharedEnumName: [''],
       type: [''],
       mappedType: [''],
-      oneToMany: [],
-      bidirectional: [],
-      var: [],
-      elementVar: []
+      oneToMany: [false],
+      bidirectional: [false],
+      var: [''],
+      elementVar: ['']
     }));
   }
 
@@ -110,18 +125,19 @@ export class CelerioMavenItemsComponent implements OnInit {
     return (str && str[0].toUpperCase() + str.slice(1)) || "";
   }
 
-  submit(event: any) {
-    alert(JSON.stringify(event));
-  }
+  generateCelerioXml(contentModal: any) {
+    console.log(JSON.stringify(this.celerioForm.value))
 
-  generateCelerioXml() {
+    const celerioFormValues = this.celerioForm.value;
+
     this.http.get('assets/celerio-template.xml', {responseType: 'text'})
             .subscribe(xmlContent => {
               const doc = xmlBuilder2.create(xmlContent);
               const celerioTag = doc
                 .root() // <celerio>
                 .first() // <configuration>
-                .att('', 'rootPackage', 'package').att('', 'applicationName', 'appName');
+                  .att('', 'rootPackage', celerioFormValues.rootPackage)
+                  .att('', 'applicationName', celerioFormValues.applicationName);
 
               const sequencesTag = celerioTag
                 .first() // skip comment
@@ -130,25 +146,66 @@ export class CelerioMavenItemsComponent implements OnInit {
                 .next(); // <sequences>
 
               sequencesTag.first() // <sequences>
-                  .att('', 'schema', 'DBOUVID01');
+                  .att('', 'schema', celerioFormValues.schemaName);
 
 
-              const entityConfisTag = celerioTag
+              const entityConfigsTag = celerioTag
                 .next() // skip comment
                 .next() ;
 
-              const entityConfig = entityConfisTag.ele('entityConfig');
-              entityConfig.att('tableName', 'ANEXO');
-              entityConfig.att('entityName', 'Anexo');
-              entityConfig.att('sequenceName', 'SEQ_ANE');
-              entityConfig.att('label', 'Anexo');
-              const columnConfigs = entityConfig.ele('columnConfigs');
-              const columConfig = columnConfigs.ele('columnConfig');
-              columConfig.att('columnName', 'ANE_ID');
-              columConfig.att('fieldName', 'id');
-              console.log(entityConfisTag.toString())
-              console.log(doc.end({ prettyPrint: true }))
+              celerioFormValues.entityConfig.forEach((entityConfig: any) => {
+                const entityConfigElement = entityConfigsTag.ele('entityConfig');
+                entityConfigElement.att('tableName', entityConfig.tableName);
+                entityConfigElement.att('entityName', entityConfig.entityName);
+                entityConfigElement.att('sequenceName', entityConfig.sequenceName);
+                entityConfigElement.att('label', entityConfig.entityName);
+
+                const columnConfigs = entityConfigElement.ele('columnConfigs');
+
+                entityConfig.columnConfigs.forEach((columnConfig: any) => {
+                  const columnConfigElement = columnConfigs.ele('columnConfig');
+                  columnConfigElement.att('columnName', columnConfig.columnName);
+                  columnConfigElement.att('fieldName', columnConfig.fieldName);
+                  columnConfigElement.att('label', columnConfig.label);
+                  columnConfigElement.att('formField', columnConfig.formField);
+                  columnConfigElement.att('searchField', columnConfig.searchField);
+                  columnConfigElement.att('searchResult', columnConfig.searchResult);
+                  if (columnConfig.displayOrder) {
+                    columnConfigElement.att('displayOrder', columnConfig.displayOrder);
+                  }
+                  if (columnConfig.version) {
+                    columnConfigElement.att('version', columnConfig.version);
+                  }
+                  if (columnConfig.sharedEnumName) {
+                    columnConfigElement.att('sharedEnumName', columnConfig.sharedEnumName);
+                  }
+                  if (columnConfig.type) {
+                    columnConfigElement.att('type', columnConfig.type);
+                  }
+                  if (columnConfig.mappedType) {
+                    columnConfigElement.att('mappedType', columnConfig.mappedType);
+                  }
+                  if (columnConfig.oneToMany) {
+                    if (columnConfig.bidirectional) {
+                      columnConfigElement.att('associationDirection', 'BIDIRECTIONAL');
+                    }
+
+                    const oneToManyElement = columnConfigElement.ele('oneToManyConfig');
+                    oneToManyElement.att('var', columnConfig.var);
+                    if (columnConfig.elementVar) {
+                      oneToManyElement.att('elementVar', columnConfig.elementVar);
+                    }
+                  }
+                });
+              });
+
+              this.generatedXml = doc.end({ prettyPrint: true });
+              this.openModal(contentModal);
             });
+  }
+
+  openModal(contentModal: any) {
+    this.modalService.open(contentModal, { size: 'xl', centered: true });
   }
 
 }

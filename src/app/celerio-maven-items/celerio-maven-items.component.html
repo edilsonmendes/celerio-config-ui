@@ -1,145 +1,162 @@
-<div class="ml-4">
-
+<div>
   <form [formGroup]="celerioForm" *ngIf="showForm">
-    <!--<formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>-->
     <div>
-      <h4>Application Settings</h4>
+      <fieldset class="fieldset p-2">
+        <legend  class="w-auto">Application Settings</legend>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="rootPackage" class="font-weight-bold"><i class="fas fa-box-open mr-1"></i> Root Package</label>
+            <input class="form-control form-control-sm" id="rootPackage" type="text" formControlName="rootPackage">
+          </div>
 
-      <div class="form-row">
-        <div class="form-group col-md-4">
-          <label for="rootPackage">Root Package</label>
-          <input class="form-control form-control-sm" id="rootPackage" type="text" formControlName="rootPackage">
-        </div>
+          <div class="form-group col-md-4">
+            <label for="applicationName" class="font-weight-bold"><i class="fas fa-file-signature mr-1"></i> Application Name</label>
+            <input class="form-control form-control-sm" id="applicationName" type="text" formControlName="applicationName">
+          </div>
 
-        <div class="form-group col-md-4">
-          <label for="applicationName">Application Name</label>
-          <input class="form-control form-control-sm" id="applicationName" type="text" formControlName="applicationName">
+          <div class="form-group col-md-4">
+            <label for="schemaName" class="font-weight-bold"> <i class="fas fa-database mr-1"></i> Schema Name</label>
+            <input class="form-control form-control-sm" id="schemaName" type="text" formControlName="schemaName">
+          </div>
         </div>
-
-        <div class="form-group col-md-4">
-          <label for="schemaName">Schema Name</label>
-          <input class="form-control form-control-sm" id="schemaName" type="text" formControlName="schemaName">
-        </div>
-      </div>
+      </fieldset>
     </div>
 
     <div formArrayName="entityConfig">
-      <h5>Entities</h5>
-      <div *ngFor="let config of entityConfig;let entityConfigIndex=index;" class="entities-container">
-        <div [formGroupName]="entityConfigIndex">
-          <div class="form-row">
-            <h4 class="col-12">{{config.value.tableName}}</h4>
-            <div class="form-group col-md-6">
-              <label for="entityName">Entity</label>
-              <input class="form-control form-control-sm" id="entityName" formControlName="entityName" />
+      <fieldset class="fieldset p-2">
+        <legend  class="w-auto">Entities</legend>
+        <div *ngFor="let config of entityConfig;let entityConfigIndex=index;" class="entities-container">
+          <div [formGroupName]="entityConfigIndex">
+            <div class="form-row mb-2 mt-2 pt-3" style="background: #ececec;">
+              <h4 class="col-md-4"><i class="fas fa-table"></i> {{config.value.tableName}}</h4>
+              <div class="form-group col-md-4">
+                <label for="entityName" class="font-weight-bold"><i class="fas fa-file-code mr-1"></i> Entity</label>
+                <input class="form-control form-control-sm" id="entityName" formControlName="entityName" />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="sequenceName" class="font-weight-bold"><i class="fas fa-plus mr-1"></i> Sequence</label>
+                <input class="form-control form-control-sm" id="sequenceName" formControlName="sequenceName" />
+              </div>
             </div>
-            <div class="form-group col-md-6">
-              <label for="sequenceName">Sequence</label>
-              <input class="form-control form-control-sm" id="sequenceName" formControlName="sequenceName" />
-            </div>
-          </div>
-          <table class="table table-bordered pagin-table table-striped" style="margin-bottom: 5px;">
-            <thead>
-               <tr>
-                  <th class="w-10">Field Name</th>
-                  <th class="w-10">Label</th>
-                  <th class="w-10">Options</th>
-                  <th class="w-5">Display order</th>
-                  <th class="w-10">Shared enum name</th>
-                  <th class="w-10">Type</th>
-                  <th class="w-10">Mapped type</th>
-                  <th>Relation</th>
-               </tr>
-            </thead>
-            <tbody id="crttblbody" class="ui-sortable" formArrayName="columnConfigs">
-              <tr *ngFor="let column of getColumnConfigsFor(entityConfigIndex);let columnIndex=index;" [formGroupName]="columnIndex">
-                <td>
-                  <div class="form-group">
-                    <input class="form-control form-control-sm" id="fieldName" formControlName="fieldName" />
-                    <label class="info-label-small mt-2 font-weight-bold">{{column.value.columnName}}</label>
-                  </div>
-                </td>
-                <td>
-                  <div class="form-group">
-                    <input class="form-control form-control-sm" id="label" formControlName="label" />
-                  </div>
-                </td>
-                <td>
-                  <div>
-                    <div class="form-check mb-1">
-                      <input class="form-check-input" type="checkbox" id="formField" formControlName="formField">
-                      <label class="form-check-label" for="formField">Form field</label>
-                    </div>
-                    <div class="form-check mb-1">
-                      <input class="form-check-input" type="checkbox" id="searchField" formControlName="searchField">
-                      <label class="form-check-label" for="searchField">Search field</label>
-                    </div>
-                    <div class="form-check mb-1">
-                      <input class="form-check-input" type="checkbox" id="searchResult" formControlName="searchResult">
-                      <label class="form-check-label" for="searchResult">Search result</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="version" formControlName="version">
-                      <label class="form-check-label" for="searchResult">Version</label>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div>
+            <table class="table table-bordered pagin-table" style="margin-bottom: 5px;">
+              <thead>
+                <tr>
+                    <th class="w-15">Field Name</th>
+                    <th class="w-10">Label</th>
+                    <th class="w-10">Options</th>
+                    <th class="w-5">Display order</th>
+                    <th class="w-10">Shared enum name</th>
+                    <th class="w-10">Type</th>
+                    <th class="w-10">Mapped type</th>
+                    <th>Relation</th>
+                </tr>
+              </thead>
+              <tbody id="crttblbody" class="ui-sortable" formArrayName="columnConfigs">
+                <tr *ngFor="let column of getColumnConfigsFor(entityConfigIndex);let columnIndex=index;" [formGroupName]="columnIndex">
+                  <td>
                     <div class="form-group">
-                      <input class="form-control form-control-sm" id="displayOrder" formControlName="displayOrder" />
+                      <input class="form-control form-control-sm" [id]="'fieldName' + columnIndex" formControlName="fieldName" />
+                      <label class="info-label-small mt-2 font-weight-bold"> <i class="fas fa-columns mr-1"> </i>{{column.value.columnName}}</label>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div>
+                  </td>
+                  <td>
                     <div class="form-group">
-                      <input class="form-control form-control-sm" id="sharedEnumName" formControlName="sharedEnumName" />
+                      <input class="form-control form-control-sm" [id]="'label' + columnIndex" formControlName="label" />
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div>
-                    <div class="form-group">
-                      <input class="form-control form-control-sm" id="type" formControlName="type" />
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div>
-                    <div class="form-group">
-                      <input class="form-control form-control-sm" id="mappedType" formControlName="mappedType" />
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="row">
-                    <div class="col-6">
+                  </td>
+                  <td>
+                    <div>
                       <div class="form-check mb-1">
-                        <input class="form-check-input" type="checkbox" id="onetomany" formControlName="oneToMany">
-                        <label class="form-check-label" for="onetomany">One to Many</label>
+                        <input class="form-check-input" type="checkbox" [id]="'formField' + columnIndex" formControlName="formField">
+                        <label class="form-check-label" [for]="'formField' + columnIndex">Form field</label>
+                      </div>
+                      <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" [id]="'searchField' + columnIndex" formControlName="searchField">
+                        <label class="form-check-label" [for]="'searchField' + columnIndex">Search field</label>
+                      </div>
+                      <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" [id]="'searchResult' + columnIndex" formControlName="searchResult">
+                        <label class="form-check-label" [for]="'searchResult' + columnIndex">Search result</label>
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="bidirectional" formControlName="bidirectional">
-                        <label class="form-check-label" for="bidirectional">Bidirectional</label>
+                        <input class="form-check-input" type="checkbox" [id]="'version' + columnIndex" formControlName="version">
+                        <label class="form-check-label" [for]="'version' + columnIndex">Version</label>
                       </div>
                     </div>
-                    <div class="col-6">
+                  </td>
+                  <td>
+                    <div>
                       <div class="form-group">
-                        <input class="form-control form-control-sm" id="var" placeholder="Var" formControlName="var" />
-                      </div>
-                      <div>
-                        <input class="form-control form-control-sm" id="elementvar" placeholder="Element Var" formControlName="elementVar" />
+                        <input class="form-control form-control-sm" [id]="'displayOrder' + columnIndex" formControlName="displayOrder" />
                       </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  </td>
+                  <td>
+                    <div>
+                      <div class="form-group">
+                        <input class="form-control form-control-sm" [id]="'sharedEnumName' + columnIndex" formControlName="sharedEnumName" />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <div class="form-group">
+                        <input class="form-control form-control-sm" [id]="'type' + columnIndex" formControlName="type" />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <div class="form-group">
+                        <input class="form-control form-control-sm" [id]="'mappedType' + columnIndex" formControlName="mappedType" />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="row">
+                      <div class="col-4">
+                        <div class="form-check mb-1">
+                          <input class="form-check-input" type="checkbox" [id]="'oneToMany' + columnIndex" formControlName="oneToMany">
+                          <label class="form-check-label" [for]="'oneToMany' + columnIndex">One to Many</label>
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div class="form-group mb-1">
+                          <input class="form-control form-control-sm" [id]="'var' + columnIndex" placeholder="Var" formControlName="var" />
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" [id]="'bidirectional' + columnIndex" formControlName="bidirectional">
+                          <label class="form-check-label" [for]="'bidirectional' + columnIndex">Bidirectional</label>
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div>
+                          <input class="form-control form-control-sm" [id]="'elementVar' + columnIndex" placeholder="Element Var" formControlName="elementVar" />
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </fieldset>
+    </div>
+    <button class="btn btn-primary submit-button" (click)="generateCelerioXml(contentModal)" [disabled]="!celerioForm.valid">Preview Celerio XML</button>
+  </form>
+
+  <ng-template #contentModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body centered">
+      <div class="flex-grow-1">
+        <ngx-monaco-editor class="full-height" [options]="editorOptions" [(ngModel)]="generatedXml"></ngx-monaco-editor>
       </div>
     </div>
-  </form>
-  <button class="btn btn-primary submit-button" (click)="generateCelerioXml()" [disabled]="false">Generate Celerio XML</button>
+  </ng-template>
+
 </div>

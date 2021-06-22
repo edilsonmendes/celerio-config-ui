@@ -2,3 +2,18 @@ body {
   font-family: 'Roboto', serif!important;
   line-height: 1.0;
 }
+
+.modal-dialog {
+  height: 100%;
+}
+
+.modal-content {
+  height: 100%;
+  min-height: 100%;
+  height: auto;
+  border-radius: 0;
+}
+
+.modal-body {
+  display: flex;
+}
